@@ -8,7 +8,29 @@ var products = {
                 return callback(err,null);
             } else {
                 console.log("Database connected");
-                var sql = 'SELECT * FROM products';
+                var sql = 'SELECT products.*,categories.name as category_name FROM products,categories WHERE products.category_id=categories.id';
+                conn.query(sql, function(err,result){
+                    conn.release;
+                    if(err){
+                        console.log(err);
+                        return callback(err,null);
+                    } else {
+                        console.log(result);
+                        return callback(null, result);
+                    }
+                });
+            }
+        });
+    },
+
+    getProductsByKey:function(key='',callback){
+        pool.getConnection(function(err,conn){
+            if(err){
+                console.log(err);
+                return callback(err,null);
+            } else {
+                console.log("Database connected");
+                var sql = 'SELECT products.*,categories.name as category_name FROM products,categories WHERE products.category_id=categories.id AND products.name like \'%'+key+'%\'';
                 conn.query(sql, function(err,result){
                     conn.release;
                     if(err){
@@ -52,8 +74,9 @@ var products = {
                 return callback(err,null);
             } else {
                 console.log("Database connected");
+                var ddate = formatDate(duedate);
                 var sql = 'INSERT INTO products (name,price,duedate,active,category_id) VALUES (?,?,?,?,?)';
-                conn.query(sql,[name,price,duedate,active,catid], function(err,result){
+                conn.query(sql,[name,price,ddate,active,catid], function(err,result){
                     conn.release;
                     if(err){
                         console.log(err);
@@ -74,8 +97,9 @@ var products = {
                 return callback(err,null);
             } else {
                 console.log("Database connected");
+                var ddate = formatDate(duedate);
                 var sql = 'UPDATE products SET name=?,price=?,duedate=?,active=?,category_id=? WHERE id=?';
-                conn.query(sql,[name,price,duedate,active,category_id,id], function(err,result){
+                conn.query(sql,[name,price,ddate,active,category_id,id], function(err,result){
                     conn.release;
                     if(err){
                         console.log(err);
@@ -110,6 +134,17 @@ var products = {
             }
         });
     }
+
+
+}
+
+function formatDate(date) {
+    var date = new Date(date);
+    var day = date.getDate();
+    var monthIndex = date.getMonth();
+    var year = date.getFullYear();
+  
+    return year+'-'+monthIndex+'-'+day;
 }
 
 module.exports = products

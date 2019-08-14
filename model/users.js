@@ -44,6 +44,29 @@ var users = {
                 });
             }
         });
+    },
+
+    updateUser:function(uname,pass,possition,email,phone,affilition,callback){
+        pool.getConnection(function(err,conn){
+            if(err){
+                console.log(err);
+                return callback(err,null);
+            } else {
+                console.log("Database connected");
+                var sql = 'UPDATE users SET password=?,position=?,email=?,phone=?,affiliation=? WHERE username=?';
+    
+                conn.query(sql,[pass,possition,email,phone,affilition,uname], function(err,result){
+                    conn.release;
+                    if(err){
+                        console.log(err);
+                        return callback(err,null);
+                    } else {
+                        console.log(result)
+                        return callback(null, result);
+                    }
+                });
+            }
+        });
     }
 }
 

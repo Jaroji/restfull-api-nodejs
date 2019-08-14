@@ -2,9 +2,7 @@ var pool = require('./databaseConfig.js');
 
 var categories = {
     getCategories:function (callback){
-        console.log("reached too");
         pool.getConnection(function(err,conn){
-            console.log("reached too 1");
             if(err){
                 console.log(err);
                 return callback(err,null);
